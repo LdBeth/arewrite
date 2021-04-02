@@ -1,11 +1,3 @@
-# OCAML_OTHER_LIBS = unix
-
-#OCAMLLIBS[] =
-#    $(ROOT)/mllib/util
-#    $(ROOT)/refiner/refiner
-#    $(ROOT)/refiner/refsig/reflib
-#    library
-
 OCAMLFLAGS += -w -8-11-26-32-40-42
 
 # Library files
@@ -33,14 +25,16 @@ FILES[] =
     builtin
     rule_app
     inner
+    arewrite
 
-OCamlLibraryInstall($(MPINSTALL), $(LIB), arewrite, $(FILES))
+OCamlLibrary(arewrite, $(FILES))
+OCamlLibraryCopy(install, dist, arewrite, arewrite)
 OCamlProgram(rewrite_test, $(FILES) test1)
 
 #
 # Clean up
 #
 clean:
-    $(CLEAN)
+    rm -rf *.cm* *~ .\#* *.o *.obj *.a *.lib *.exe *.omc *.tmp
 
-all: arewrite$(LIB_SUFFIX)
+all: install
