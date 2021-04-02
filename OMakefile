@@ -1,0 +1,46 @@
+# OCAML_OTHER_LIBS = unix
+
+#OCAMLLIBS[] =
+#    $(ROOT)/mllib/util
+#    $(ROOT)/refiner/refiner
+#    $(ROOT)/refiner/refsig/reflib
+#    library
+
+OCAMLFLAGS += -w -8-11-26-32-40-42
+
+# Library files
+FILES[] =
+    mylist
+    rtrie
+    intern
+    getfile
+    lex
+    parser
+    rtype
+    exp
+    expIntern
+    disc
+    rcontext
+    rsubst
+    prettyPrint
+    renv
+    rtrace
+    cache
+    match
+    derive
+    crewrite
+    kbrewrite
+    builtin
+    rule_app
+    inner
+
+OCamlLibraryInstall($(MPINSTALL), $(LIB), arewrite, $(FILES))
+OCamlProgram(rewrite_test, $(FILES) test1)
+
+#
+# Clean up
+#
+clean:
+    $(CLEAN)
+
+all: arewrite$(LIB_SUFFIX)
