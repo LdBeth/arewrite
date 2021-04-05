@@ -1,4 +1,4 @@
-OCAMLFLAGS += -w -8-11-26-32-40-42
+OCAMLFLAGS += -w -8-26
 
 # Library files
 FILES[] =
@@ -37,4 +37,4 @@ OCamlProgram(rewrite_test, $(FILES) test1)
 clean:
     rm -rf *.cm* *~ .\#* *.o *.obj *.a *.lib *.exe *.omc *.tmp
 
-all: install
+all: install rewrite_test

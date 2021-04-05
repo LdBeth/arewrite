@@ -326,7 +326,6 @@ let rec delete_prefix l x = match (l,x) with
   | (x,[]) -> [-1]
   | ((a::b),(c::d)) ->
     if a=c then delete_prefix b d else raise NotPrefix
-  | (_,_) -> raise NotPrefix ;;
 
 let rec toSubterm x l = match l with
   | ((v,[-1])::r) -> ((v,[-1])::(toSubterm x r))

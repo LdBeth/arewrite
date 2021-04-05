@@ -893,9 +893,9 @@ let build_trie patterns mode =
           | (TVAR (n,m,prec)) -> (TVAR (("v" ^ (string_of_int count)),m,prec))
           | t -> t in
     let rec ss l = match l with
-          | l -> []
           | (SPECIAL " "::r) -> ss r
-          | (a::b) -> a::(ss b) in
+          | (a::b) -> a::(ss b)
+          | l -> [] in
     let strip_spaces (i,e,toks,rest) =
         (i,e,ss toks,rest) in
     let carry_ac_stuff s = match s with
@@ -1195,11 +1195,6 @@ and trie_parse_no_prefix trie mode prec l =
             if i>=prec then e::(get_results r) else get_results r
           | (_::r) -> get_results r in
     let rec process_trie trie sub l indices re ce = match (trie,l) with
-          | (_,[]) ->
-            let  r = get_results trie
-            in
-                if r=[] then raise (ParseFailure ("*END",0,0))
-                         else (Rsubst.subst sub (List.hd r),[],generate_ind (List.hd r) indices,re,ce)
           | ([],(f::r)) -> raise (ParseFailure(mk_failure (f::r)))
           | (((TrieToken (TVAR (v,m,i),t))::rest),(f::r)) ->
             (try let
@@ -1220,9 +1215,14 @@ and trie_parse_no_prefix trie mode prec l =
                 (Rsubst.subst sub e,l,generate_ind e indices,re,ce)
             else
                 process_trie rest sub l indices re ce
-          | ((_::rest),(f::r)) ->
-            process_trie rest sub (f::r) indices re ce
-          | (_,_) -> raise (ParseFailure (mk_failure l)) in
+      (*  | ((_::rest),(f::r)) ->
+            process_trie rest sub (f::r) indices re ce *)
+          | (_,[]) ->
+            let  r = get_results trie
+            in
+                if r=[] then raise (ParseFailure ("*END",0,0))
+                         else (Rsubst.subst sub (List.hd r),[],generate_ind (List.hd r) indices,re,ce)
+    in
         (*val _ = print ("Processing " ^ (print_tokens2 rest) ^ "\n")*)
     let (_,f,rs,cs,re,ce) = List.hd rest in
     let (e,l,st,re,ce) = process_trie trl2 Rsubst.empty rest [] re ce

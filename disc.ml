@@ -235,16 +235,15 @@ let rec findInt a l = match l with
   | [S(x)] -> setFind a x
 and setFind l x = match l with
   | [] -> []
+  | (D(T(Var),r1)::r2) ->
+    (endFind r1)@(setFind r2 x)
   | (D(T(v),r1)::r2) -> setFind r2 x
   | (D(S(v),r1)::r2) ->
     if (Mylist.is_subset v x) then
         (endFind r1)@(setFind r2 x)
     else
         setFind r2 x
-  | (D(T(Var),r1)::r2) ->
-    (endFind r1)@(setFind r2 x)
   | (E(e)::r) -> e@(setFind r x)
-  | (D(_,r1)::r2) -> setFind r2 x
 and normalFind l x r = match l with
   | [] -> []
   | (D(T(Var),l)::r2) -> (endFind l)@(findInt l r)@(normalFind r2 x r)
@@ -270,15 +269,14 @@ let rec ufindInt a l = match l with
   | [S(x)] -> usetFind a x
 and usetFind l x = match l with
   | [] -> []
+  | (D(T(Var),r1)::r2) -> (uendFind r1)@(usetFind r2 x)
   | (D(T(v),r1)::r2) -> usetFind r2 x
   | (D(S(v),r1)::r2) ->
     if (Mylist.is_subset v x) then
         (uendFind r1)@(usetFind r2 x)
     else
         usetFind r2 x
-  | (D(T(Var),r1)::r2) -> (uendFind r1)@(usetFind r2 x)
   | (E(e)::r) -> e@(usetFind r x)
-  | (D(_,r1)::r2) -> usetFind r2 x
 and unormalFind l x r = match l with
   | [] -> []
   | (D(T(Var),l)::r2) -> (uendFind l)@(ufindInt l r)@(unormalFind r2 x r)

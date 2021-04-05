@@ -1233,26 +1233,6 @@ let builtin rewrite env e = match e with
     in
         [(APPL (12,[APPL (78,l2),NUM 1]))]
     end else []*)
-  | (APPL (11,[APPL (78,l1);APPL (78,l2)])) ->
-    if num_count l1 = 1 && num_count l2 = 1 then
-    let (n1,l1) = find_delete_encode_num l1 in
-    let (n2,l2) = find_delete_encode_num l2 in
-    let d = gcd n1 n2 in
-        if d > 1 then
-            [(APPL (11,[APPL (78,(NUM (n1 / d))::l1);APPL (78,(NUM (n2 / d))::l2)]))]
-        else []
-    else if Match.equal env (APPL (78,l1)) (APPL (78,l2)) then
-        [(APPL (intern_true,[]))]
-    else []
-  | (APPL (80,[APPL (78,l1);APPL (78,l2)])) ->
-    if num_count l1 = 1 && num_count l2 = 1 then
-    let (n1,l1) = find_delete_encode_num l1 in
-    let (n2,l2) = find_delete_encode_num l2 in
-    let d = gcd n1 n2 in
-        if d > 1 then
-            [(APPL (80,[APPL (78,(NUM (n1 / d))::l1);APPL (78,(NUM (n2 / d))::l2)]))]
-        else []
-    else []
   | (APPL (12,[APPL (78,l1);APPL (78,l2)])) ->
     if num_count l1 = 1 && num_count l2 = 1 then
     let (n1,l1) = find_delete_encode_num l1 in

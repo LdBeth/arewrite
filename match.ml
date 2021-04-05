@@ -158,12 +158,12 @@ let rec not_bound a l = match l with
         not_bound a (c::r) ;;
 
 let rec no_bound_vars l bound = match l with
-  | l -> true
   | (a::b) ->
     if not_bound a bound then
         no_bound_vars b bound
     else
-        false ;;
+        false
+  | l -> true
 
 let no_bound e bound = no_bound_vars (Rcontext.getFreeVars e) bound ;;
 
@@ -634,6 +634,11 @@ let rec u_unify env t1 t2 q theta1 theta2 = match (t1,t2) with
             else
                 [])
         else []
+  | ((MARKED_VAR v1),(VAR v2)) ->
+    if not(depth1 v1 q= -1) || not(v1=v2) then
+        []
+    else
+        [(theta1,theta2,[],[])]
   | (e,(VAR v)) ->
     let d = depth3 v q in
         if d = -1 then
@@ -657,11 +662,6 @@ let rec u_unify env t1 t2 q theta1 theta2 = match (t1,t2) with
         else []
   | ((MARKED_VAR v1),(MARKED_VAR v2)) ->
     if not(v1=v2) then
-        []
-    else
-        [(theta1,theta2,[],[])]
-  | ((MARKED_VAR v1),(VAR v2)) ->
-    if not(depth1 v1 q= -1) || not(v1=v2) then
         []
     else
         [(theta1,theta2,[],[])]
@@ -834,7 +834,7 @@ and unify_single_var2 env rest v s q theta1 theta2 =
                     (u_unify env t v q theta1 theta2)))) rest))
 and unify_terms env l l2 q theta1 theta2 = match (l,l2) with
   | ([],_) -> [(theta1,theta2,l2,[])]
-  | (l1,_) -> [(theta1,theta2,[],l1)]
+  | (l1,[]) -> [(theta1,theta2,[],l1)]
   | ((a::b),l2) ->
     (List.fold_left List.append [] (List.map
         (fun (theta1,theta2,rest) -> unify_terms env b rest q theta1 theta2)
@@ -955,7 +955,6 @@ let rec swallow_symbols env s exps t =
 
 let rec pair_map env s ex  l = match (ex,l) with
   | (_,[]) -> l
-  | (ex,[]) -> []
   | ((a::b),(c::d)) -> (swallow_symbols env s a c)@(pair_map env s b d)
   ;;
 

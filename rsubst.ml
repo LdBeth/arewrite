@@ -126,14 +126,6 @@ let rec bsubst b u e = match e with
         bbb = List.append b (Rcontext.getFreeVars v)
     in
         (LET (v,t,bsubst b u e,bsubst bbb u bb))
-  | (CASE (e,t,c)) ->
-    (* let bbb = List.append b (Rcontext.getFreeVars e) in *)
-    let c2 = List.map (fun (p,e) ->
-                         (p,
-                          let bb = List.append b (Rcontext.getFreeVars p) in bsubst bb u e)
-                     ) c
-    in
-        (CASE (bsubst b u e,t,c2))
   | (INDEX (e,s,i)) -> (INDEX ((bsubst b u e),s,i))
   | e -> e ;;
 let subst u e = bsubst [] u e ;;
