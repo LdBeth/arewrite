@@ -260,11 +260,7 @@ val count : unit -> int
 end
 
 module Rtrace : sig
-   val indent: unit -> unit
-val undent: unit -> unit
-val setBlocks: (string list) -> unit
-val trace: string -> (unit -> string) -> unit
-val trace_list: string -> (unit -> string list) -> unit
+val set_traceout: (string -> unit) -> unit
 val toggle_trace: unit -> unit
 val is_trace_on: unit -> bool
 end

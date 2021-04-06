@@ -34,8 +34,7 @@
 (* open listimpl ; *)
 (* open TextIO ; *)
 
- let f = ref (open_out "trace.out") ;;
- let _ = close_out (!f) ;;
+ let f = ref (fun _ -> ()) ;;
 
  let trace_on = ref false ;;
 
@@ -43,41 +42,28 @@
 
  let toggle_trace () =
      (if !trace_on then
-         (close_out (!f) ;
-          trace_on := false)
+          trace_on := false
      else
-         (f := open_out "trace.out" ;
-          trace_on := true) ; ());;
+          trace_on := true)
 
 (*val blocks = ref ["rewriteRule","rewriteRuleDisc","Disc","match","rewrite","derive"] ;*)
 let blocks = ref ["match";"rewriteRuleDisc";"rewriteRule";"kbrewrite";"rewrite";"derive";"kbrewrite"] ;;
 (*val blocks = ref ["env"] ;*)
 
-let setBlocks bl = ((blocks := bl) ; ()) ;;
+let setBlocks bl = (blocks := bl);;
 
 let ind = ref 0 ;;
 
 let indent () = (ind := (!ind)+2) ;;
-let undent () = ((ind := (!ind)-2) ;
-                  if !trace_on then
-                      ((close_out (!f)) ;
-                       (f := open_out_gen [Open_append] 0o666 "trace.out"))
-                  else
-                      ()) ;;
+let undent () = (ind := (!ind)-2) ;;
 
-let rec indent_line n = match n with
-   | 0 -> ()
-   | n ->
-     if n > 0 then
-         (output_string (!f) " " ; flush (!f) ;
-          indent_line (n-1))
-     else () ;;
+let rec indent_line n = if n <> 0 then !f (String.make n ' ')
 
 let trace x s =
      if !trace_on && List.mem x (!blocks) then
          (indent_line (!ind) ;
           (*print_string ((s ()) ^ "\n") ; flush stdout ;*)
-          output_string (!f) ((s ()) ^ "\n") ; flush (!f)) else () ;;
+          (!f) ((s ()) ^ "\n")) else () ;;
 
 let trace_list x s =
      if List.mem x (!blocks) && (!trace_on) then
@@ -85,5 +71,8 @@ let trace_list x s =
              (fun (x) ->
                  (indent_line (!ind) ;
                   (*print_string (x ^ "\n") ; flush stdout ;*)
-                  output_string (!f) (x ^ "\n"))) (s ())
+                  (!f) (x ^ "\n"))) (s ())
      )
+     else () ;;
+
+let set_traceout fn = f := fn ;;
